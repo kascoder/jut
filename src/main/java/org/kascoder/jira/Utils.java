@@ -1,29 +1,14 @@
 package org.kascoder.jira;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.PasswordAuthentication;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Utils {
     private Utils() {
-    }
-
-    public static boolean validateArgs(String[] args) {
-        if (args.length < 4) {
-            System.out.println("Incorrect number of arguments. Expected: at least 4, Actual: " + args.length);
-            System.out.println("Arguments template: %path_to_file% %username% %api_key% %api_base_website% [%default_comment%]");
-            return false;
-        }
-
-        return true;
     }
 
     public static HttpRequest.BodyPublisher ofMultipartData(Map<Object, Object> data, String boundary) {
@@ -57,30 +42,20 @@ public class Utils {
         }
     }
 
-    public static Optional<File> getFile(String[] args) {
-        if (args.length < 1) {
-            return Optional.empty();
-        }
-
-        var videoFile = new File(args[0]);
-        if (!videoFile.exists() || videoFile.isDirectory()) {
-            return Optional.empty();
-        }
-
-        var fileName = videoFile.getName().toLowerCase();
-        if (!fileName.startsWith("proof-") || !fileName.endsWith(".mp4")) {
-            return Optional.empty();
-        }
-
-        return Optional.of(videoFile);
+    public static boolean isBlank(String str) {
+        return str == null || str.isBlank();
     }
 
-    public static Optional<PasswordAuthentication> parseAuthentication(String[] args) {
-        if (args.length < 3) {
-            return Optional.empty();
-        }
+    public static boolean isNotBlank(String str) {
+        return !isBlank(str);
+    }
 
-        return Optional.of(new PasswordAuthentication(args[1], args[2].toCharArray()));
+    public static boolean isImgFile(String extension) {
+        return Utils.isNotBlank(extension) && Set.of("png", "jpg").contains(extension);
+    }
+
+    public static boolean isVidFile(String extension) {
+        return Utils.isNotBlank(extension) && Objects.equals("mp4", extension);
     }
 
     public static String basicAuth(String username, String password) {

@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'org.kascoder'
-version '1.0-SNAPSHOT'
+version '1.0-alpha'
 
 repositories {
     mavenCentral()
@@ -21,4 +21,15 @@ dependencies {
 
 compileJava {
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+}
+
+jar {
+    archiveBaseName = 'jut'
+    manifest {
+        attributes 'Main-Class': 'org.kascoder.jira.EntryPoint'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
